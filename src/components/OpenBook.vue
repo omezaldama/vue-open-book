@@ -85,7 +85,6 @@ const getCellClasses = (row: number, col: number): string[] => {
 };
 
 // Handlers
-// TODO: Is it necessary for handlers to return a boolean value?
 const handleMouseDown = (e: MouseEvent): boolean => {
   const target = e.target as HTMLElement;
   if (target.closest('.ob-table-cell')) {
@@ -141,117 +140,29 @@ const handleMouseUp = (_: MouseEvent): boolean => {
 const handleKeyPressed = (e: KeyboardEvent): boolean => {
   if (e.metaKey) return true;
   if (e.key === 'Enter') {
-    if (activeCell.value) {
-      const { col, row } = activeCell.value;
-      const cell = document.querySelector(`[data-col="${col}"][data-row="${row}"]`)! as HTMLElement;
-      data.value[row][col] = cell.textContent;
-      cell.contentEditable = 'false';
-      activeCell.value = null;
-    }
-    if (focusedCell.value) {
-      let { col, row } = focusedCell.value;
-      const nBookRows = data.value.length;
-      if (row < nBookRows - 1) {
-        focusedCell.value = { col, row: row + 1 };
-      }
-      const { col: newCol, row: newRow } = focusedCell.value;
-      selection.value = { from: { col: newCol, row: newRow }, to: { col: newCol, row: newRow } };
-    }
+    handleEnterKeypress();
   }
   else if (ARROW_KEYS.includes(e.key)) {
     if (focusedCell.value !== null && activeCell.value === null) {
       if (e.ctrlKey) {
-        switch (e.key) {
-          case 'ArrowUp':
-            focusedCell.value.row = 0;
-            break;
-          case 'ArrowRight':
-            focusedCell.value.col = data.value[0].length - 1;
-            break;
-          case 'ArrowDown':
-            focusedCell.value.row = data.value.length - 1;
-            break;
-          case 'ArrowLeft':
-            focusedCell.value.col = 0;
-            break;
-        }
-        const { col, row } = focusedCell.value;
-        selection.value = { from: { row, col }, to: { row, col } };
+        handleCtrlArrowKeypress(e);
       }
       else if (e.shiftKey) {
-        switch (e.key) {
-          case 'ArrowUp':
-            if (selection.value!.from.row > 0) selection.value!.from.row--;
-            break;
-          case 'ArrowRight':
-            if (selection.value!.to.col < data.value[0].length - 1) selection.value!.to.col++;
-            break;
-          case 'ArrowDown':
-            if (selection.value!.to.row < data.value.length - 1) selection.value!.to.row++;
-            break;
-          case 'ArrowLeft':
-            if (selection.value!.from.col > 0) selection.value!.from.col--;
-            break;
-        }
+        handleShiftArrowKeypress(e);
       }
       else {
-        e.preventDefault();
-        switch (e.key) {
-          case 'ArrowUp':
-            if (focusedCell.value.row > 0) focusedCell.value.row--;
-            break;
-          case 'ArrowRight':
-            if (focusedCell.value.col < data.value[0].length - 1) focusedCell.value.col++;
-            break;
-          case 'ArrowDown':
-            if (focusedCell.value.row < data.value.length - 1) focusedCell.value.row++;
-            break;
-          case 'ArrowLeft':
-            if (focusedCell.value.col > 0) focusedCell.value.col--;
-            break;
-        }
-        const { col, row } = focusedCell.value;
-        selection.value = { from: { row, col }, to: { row, col } };
+        handlePureArrowKeypress(e);
       }
     }
   }
   else if (DELETE_KEYS.includes(e.key)) {
-    if (selection.value !== null && activeCell.value === null) {
-      let tmpData = JSON.parse(JSON.stringify(data.value));
-      for (let i=selection.value.from.row; i<=selection.value.to.row; i++)
-        for (let j=selection.value.from.col; j<=selection.value.to.col; j++)
-          tmpData[i][j] = null;
-      data.value = tmpData;
-    }
+    deleteSelectionContent();
   }
   else if (TEXT_KEYS.includes(e.key) && !e.ctrlKey) {
-    if (activeCell.value === null && focusedCell.value !== null) {
-      e.preventDefault();
-      const { col, row } = focusedCell.value;
-      const cell = document.querySelector(`[data-col="${col}"][data-row="${row}"]`)! as HTMLElement;
-      cell.textContent = e.key;
-      cell.contentEditable = 'true';
-      cell.focus();
-      const sel = window.getSelection()!;
-      sel.selectAllChildren(cell);
-      sel.collapseToEnd();
-      activeCell.value = { col, row };
-      return false;
-    }
+    return handleTextKeypress(e);
   }
   else if (e.key === 'F2') {
-    if (activeCell.value === null && focusedCell.value !== null) {
-      e.preventDefault();
-      const { col, row } = focusedCell.value;
-      const cell = document.querySelector(`[data-col="${col}"][data-row="${row}"]`)! as HTMLElement;
-      cell.contentEditable = 'true';
-      cell.focus();
-      const sel = window.getSelection()!;
-      sel.selectAllChildren(cell);
-      sel.collapseToEnd();
-      activeCell.value = { col, row };
-      return false;
-    }
+    return handleF2Keypress(e);
   }
   return true;
 };
@@ -316,6 +227,115 @@ const handleCut = (e: ClipboardEvent): boolean => {
       deleteSelectionContent();
       return false;
     }
+  }
+  return true;
+};
+
+// Subhandlers
+const handleEnterKeypress = (): void => {
+  if (activeCell.value) {
+    const { col, row } = activeCell.value;
+    const cell = document.querySelector(`[data-col="${col}"][data-row="${row}"]`)! as HTMLElement;
+    data.value[row][col] = cell.textContent;
+    cell.contentEditable = 'false';
+    activeCell.value = null;
+  }
+  if (focusedCell.value) {
+    let { col, row } = focusedCell.value;
+    const nBookRows = data.value.length;
+    if (row < nBookRows - 1) {
+      focusedCell.value = { col, row: row + 1 };
+    }
+    const { col: newCol, row: newRow } = focusedCell.value;
+    selection.value = { from: { col: newCol, row: newRow }, to: { col: newCol, row: newRow } };
+  }
+};
+
+const handleCtrlArrowKeypress = (e: KeyboardEvent): void => {
+  switch (e.key) {
+    case 'ArrowUp':
+      focusedCell.value!.row = 0;
+      break;
+    case 'ArrowRight':
+      focusedCell.value!.col = data.value[0].length - 1;
+      break;
+    case 'ArrowDown':
+      focusedCell.value!.row = data.value.length - 1;
+      break;
+    case 'ArrowLeft':
+      focusedCell.value!.col = 0;
+      break;
+  }
+  const { col, row } = focusedCell.value!;
+  selection.value = { from: { row, col }, to: { row, col } };
+};
+
+const handleShiftArrowKeypress = (e: KeyboardEvent): void => {
+  switch (e.key) {
+    case 'ArrowUp':
+      if (selection.value!.from.row > 0) selection.value!.from.row--;
+      break;
+    case 'ArrowRight':
+      if (selection.value!.to.col < data.value[0].length - 1) selection.value!.to.col++;
+      break;
+    case 'ArrowDown':
+      if (selection.value!.to.row < data.value.length - 1) selection.value!.to.row++;
+      break;
+    case 'ArrowLeft':
+      if (selection.value!.from.col > 0) selection.value!.from.col--;
+      break;
+  }
+};
+
+const handlePureArrowKeypress = (e: KeyboardEvent): void => {
+  e.preventDefault();
+    switch (e.key) {
+      case 'ArrowUp':
+        if (focusedCell.value!.row > 0) focusedCell.value!.row--;
+        break;
+      case 'ArrowRight':
+        if (focusedCell.value!.col < data.value[0].length - 1) focusedCell.value!.col++;
+        break;
+      case 'ArrowDown':
+        if (focusedCell.value!.row < data.value.length - 1) focusedCell.value!.row++;
+        break;
+      case 'ArrowLeft':
+        if (focusedCell.value!.col > 0) focusedCell.value!.col--;
+        break;
+    }
+    const { col, row } = focusedCell.value!;
+    selection.value = { from: { row, col }, to: { row, col } };
+};
+
+const handleTextKeypress = (e: KeyboardEvent): boolean => {
+  if (activeCell.value === null && focusedCell.value !== null) {
+    e.preventDefault();
+    const { col, row } = focusedCell.value;
+    const cell = document.querySelector(`[data-col="${col}"][data-row="${row}"]`)! as HTMLElement;
+    cell.textContent = e.key;
+    cell.contentEditable = 'true';
+    cell.focus();
+    const sel = window.getSelection()!;
+    sel.selectAllChildren(cell);
+    sel.collapseToEnd();
+    activeCell.value = { col, row };
+    return false;
+  }
+  return true;
+};
+
+const handleF2Keypress = (e: KeyboardEvent): boolean => {
+  if (activeCell.value === null && focusedCell.value !== null) {
+    e.preventDefault();
+    const { col, row } = focusedCell.value;
+    const cell = document.querySelector(`[data-col="${col}"][data-row="${row}"]`)! as HTMLElement;
+    cell.contentEditable = 'true';
+    cell.focus();
+    const sel = window.getSelection()!;
+    sel.selectAllChildren(cell);
+    sel.collapseToEnd();
+    activeCell.value = { col, row };
+    return false;
   }
   return true;
 };
