@@ -1,0 +1,50 @@
+{
+  "name": "vue-open-book",
+  "version": "0.0.4",
+  "description": "Open source spread sheet vue component",
+  "main": "./dist/vue-open-book.umd.js",
+  "module": "./dist/vue-open-book.js",
+  "types": "./dist/vue-open-book.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/vue-open-book.js",
+      "require": "./dist/vue-open-book.umd.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/style.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    }
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "typescript",
+    "spreadsheet"
+  ],
+  "author": "Oscar Meza Aldama",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "peerDependencies": {
+    "vue": ">=3.4"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.21"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.5",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vite-plugin-dts": "^3.9.1",
+    "vue-tsc": "^2.0.6"
+  }
+}

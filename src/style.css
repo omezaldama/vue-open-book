@@ -1,0 +1,49 @@
+.ob-table-header, .ob-table-cell, .ob-table {
+  border: 1px solid #c2c2c2;
+}
+.ob-table-header, .ob-table-cell {
+  height: 22px;
+  margin: 0;
+  max-height: 22px;
+  padding: 0 5px;
+  user-select: none;
+  width: 48px;
+  min-width: 48px;
+}
+.ob-table-header {
+  background-color: #e7e7e7;
+  color: #333;
+}
+.ob-table-selection-header {
+  background-color: #d0d0d0;
+  color: #333;
+}
+.ob-table {
+  border-collapse: collapse;
+}
+.ob-table-cell {
+  overflow-x: clip;
+  color: #000;
+  box-sizing: border-box;
+}
+.ob-table-cell-focused {
+  border: 3px solid #5566fd;
+}
+.ob-table-cell-selected {
+  background-color: #e4eeff;
+}
+.ob-table-selection-top {
+  border-top: 3px solid #5566fd;
+}
+.ob-table-selection-bottom {
+  border-bottom: 3px solid #5566fd;
+}
+.ob-table-selection-right {
+  border-right: 3px solid #5566fd;
+}
+.ob-table-selection-left {
+  border-left: 3px solid #5566fd;
+}
+.ob-table-header {
+  font-weight: bold;
+}
