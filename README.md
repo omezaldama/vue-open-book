@@ -28,7 +28,7 @@ import 'vue-open-book/dist/style.css';
 
 const myData = ref([
   [1, 2, 3, undefined, 5],
-  [6, null, 7, 8, 'some string', 10],
+  [6, null, 8, 'nine', 10],
 ]);
 </script>
 ```
