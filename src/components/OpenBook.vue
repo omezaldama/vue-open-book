@@ -369,5 +369,5 @@ const deleteSelectionContent = (): void => {
 </script>
 
 <style scoped>
-@import '../styles.module.css';
+@import '../style.css';
 </style>

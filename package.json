@@ -1,6 +1,6 @@
 {
   "name": "vue-open-book",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Open source spread sheet vue component",
   "main": "./dist/vue-open-book.umd.js",
   "module": "./dist/vue-open-book.js",
@@ -11,6 +11,10 @@
       "import": "./dist/vue-open-book.js",
       "require": "./dist/vue-open-book.umd.js",
       "types": "./dist/index.d.ts"
+    },
+    "./dist/style.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
     }
   },
   "keywords": [
