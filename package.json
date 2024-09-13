@@ -1,6 +1,6 @@
 {
   "name": "vue-open-book",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Open source spread sheet vue component",
   "main": "./dist/vue-open-book.umd.js",
   "module": "./dist/vue-open-book.js",
@@ -23,6 +23,8 @@
     "typescript",
     "spreadsheet"
   ],
+  "license": "MIT",
+  "repository": "https://github.com/omezaldama/vue-open-book",
   "author": "Oscar Meza Aldama",
   "files": [
     "dist",
